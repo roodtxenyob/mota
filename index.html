@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>魔塔</title>
+		<script src="js/attr.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/map.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/ImageLoader.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/actor.js" type="text/javascript" charset="utf-8"></script>
+		<style type="text/css">
+			* {
+			    padding: 0;
+			    margin: 0;
+			    border: none;
+			}
+			
+			html {
+			    -moz-osx-font-smoothing: grayscale;
+			    -webkit-font-smoothing: antialiased;
+			    text-rendering: optimizeLegibility;
+			}
+			
+			body {
+			   text-align: center;
+			}
+			
+			.mt-box {
+			    width: 700px;
+			    height: 372px;
+			    margin: 0 auto;
+			    position: relative;
+			    background: url("./img/other/Bgd01-Wall01.png");
+			}
+			
+			.mt-left {
+			    width: 174px;
+			    height: 100%;
+			    float: left;
+			    position: relative;
+			}
+			
+			.mt-left .mt-actor {
+			    height: 180px;
+			}
+			
+			.mt-left .mt-key {
+			    width: 100%;
+			    height: 104px;
+			    text-align: center;
+			    display: block;
+			    box-shadow: 0 0 20px #333;
+			}
+			
+			.mt-left .mt-shortcut {
+			    width: 100%;
+			    height: 88px;
+			    color: white;
+			    font-size: 18px;
+			}
+			
+			.mt-shortcut .mt_kb {
+			    width: 87px;
+			    height: 38px;
+			    line-height: 38px;
+			    display: inline-block;
+			    text-align: center;
+			    float: left;
+			    margin-top: 5px;
+			}
+			
+			.mt-shortcut .mt_kb:last-child {
+			    margin-top: 0;
+			}
+			
+			.mt-board {
+			    width: 352px;
+			    position: relative;
+			    float: left;
+			}
+			
+			.mt-board #board {
+			    position: absolute;
+			    display: block;
+			    margin-top: 10px;
+			    box-shadow: 0 0 20px #333;
+			}
+			
+			.mt-board #manual {
+			    position: absolute;
+			    margin-top: 10px;
+			    display: none;
+			    background-color: rgba(66, 66, 66, 0.7);
+			}
+			
+			.mt-board .mt-msg {
+			    position: absolute;
+			    width: 280px;
+			    height: 180px;
+			    left: 50%;
+			    display: none;
+			    margin-top: 50%;
+			    transform: translate(-50%, -50%);
+			    background-color: rgba(66, 66, 66, 0.8);
+			    text-align: center;
+			    border-radius: 5px;
+			    box-shadow: 0 0 20px #333;
+			    z-index: 100;
+			}
+			
+			.mt-board .mt-msg #message {
+			    margin-top: 8px;
+			}
+			
+			.mt-right {
+			    width: 174px;
+			    height: 100%;
+			    position: relative;
+			    float: right;
+			}
+			
+			.mt-right .mt-weapon {
+			    height: 100px;
+			    width: 100%;
+			    margin-top: 20px;
+			    text-align: center;
+			    box-shadow: 0 0 20px #333;
+			}
+			
+			.mt-right .mt-prop {
+			    height: 100%;
+			    width: 100%;
+			    margin-top: 10px;
+			    text-align: center;
+			}
+			
+			.mt-board .mt-save {
+			    width: 352px;
+			    height: 352px;
+			    position: absolute;
+			    display: none;
+			    background-color: rgba(66, 66, 66, 0.7);
+			    margin-top: 10px;
+			    color: white;
+			}
+			
+			.mt-board .mt-save h3 {
+			    height: 40px;
+			    line-height: 40px;
+			    font-size: 26px;
+			    text-align: center;
+			    padding-top: 10px;
+			}
+			
+			.mt-board .mt-save .mt-record {
+			    width: 320px;
+			    text-align: center;
+			    font-size: 25px;
+			    height: 74px;
+			    color: #FFFFFF;
+			    line-height: 74px;
+			    background-color: rgba(160, 160, 160, 0.8);
+			    margin: 10px auto;
+			    border-radius: 10px;
+			}
+			
+			.mt-board .mt-save .mt-tip {
+			    height: 30px;
+			    line-height: 30px;
+			    text-align: right;
+			    margin-right: 20px;
+			}
+			
+			.npd{
+				margin-top: 10px;
+				width: 352px;
+				height: 352px;
+				position: relative;
+				z-index: 90;
+				background-color: rgba(66, 66, 66, 0.8);
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="mt-box">
+			<div class="mt-left">
+				<div class="mt-actor">
+					<canvas id="actor" style="padding-top: 10px;" width="174" height="160"></canvas>
+				</div>
+				<div class="mt-key">
+					<canvas id="key" style="padding-top: 3px;" width="150" height="96"></canvas>
+				</div>
+				<div class="mt-shortcut">
+					<span class="mt_kb">R 重玩</span>
+					<span class="mt_kb">S 存盘</span>
+					<span class="mt_kb">L 读取</span>
+				</div>
+			</div>
+			<div class="mt-board">
+				<canvas id="board" width="352" height="352">您浏览器不支持Canvas</canvas>
+				<div class="npd">
+					<canvas id="man" width="352" height="352"></canvas>
+				</div>
+				
+				<div class="mt-msg">
+					<canvas id="message" width="300px" height="230px"></canvas>
+				</div>
+				<div class="mt-save" data-record-type="1">
+					<h3 id="mt-sv-title">游戏保存进度</h3>
+					<div class="mt-record" data-record-loc="1">存档 1</div>
+					<div class="mt-record" data-record-loc="2">存档 2</div>
+					<div class="mt-record" data-record-loc="3">存档 3</div>
+					<p class="mt-tip">按回车键取消</p>
+				</div>
+			</div>
+			<div class="mt-right">
+				<div class="mt-weapon">
+					<canvas id="weapon" width="150" height="96"></canvas>
+				</div>
+				<div class="mt-prop">
+					<canvas id="prop" width="150" height="224"></canvas>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="js/main.js" type="text/javascript" charset="utf-8"></script>
+</html>
